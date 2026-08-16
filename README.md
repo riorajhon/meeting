@@ -4,7 +4,7 @@ Professional meeting and assessment frontend for investor sessions, client techn
 
 This phase is **UI and application structure only**. Video, audio, screen sharing, code execution, recording, AI, and the production backend are represented with mock data and simulated interactions. No external meeting APIs or SDKs are used.
 
-Built with **Next.js 16** (App Router), React 19, TypeScript, and Tailwind CSS v4.
+Built with **Next.js 16** (App Router), React 19, TypeScript, and Tailwind CSS v4..
 
 ## Run locally
 
