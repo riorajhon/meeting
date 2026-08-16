@@ -63,7 +63,7 @@ export function statusTone(
 ): "slate" | "teal" | "amber" | "rose" {
   if (status === "live") return "rose";
   if (status === "draft" || status === "cancelled") return "amber";
-  if (status === "completed") return "slate";
+  if (status === "completed" || status === "cancelled") return "slate";
   return "teal";
 }
 

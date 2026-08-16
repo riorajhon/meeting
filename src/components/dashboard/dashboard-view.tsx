@@ -291,7 +291,7 @@ function copyFor(role: UserRole, name: string) {
     hello: `Welcome, ${first}`,
     sub: "Run professional meetings, technical assessments, and hiring loops from one workspace.",
     stats: [
-      { label: "Sessions today", value: "3", hint: "1 live, 1 upcoming", icon: CalendarDays },
+      { label: "Sessions today", value: "3", hint: "1 live, 2 upcoming", icon: CalendarDays },
       { label: "Open roles", value: "5", hint: "2 staff loops active", icon: UserRound },
       { label: "Reports ready", value: "2", hint: "Share with the committee", icon: ClipboardList },
       { label: "Avg score", value: "4.1", hint: "Last 30 days", icon: LineChart },

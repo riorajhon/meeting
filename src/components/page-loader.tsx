@@ -72,7 +72,7 @@ export function PageLoader({
       className={cn(
         "grid place-items-center",
         overlay
-          ? "fixed inset-0 z-[90] backdrop-blur-sm"
+          ? "overlay-in fixed inset-0 z-[90] backdrop-blur-sm"
           : "min-h-[52vh] w-full py-24",
         overlay && (dark ? "bg-[#05070d]/70" : "bg-white/72"),
       )}

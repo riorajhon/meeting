@@ -3,9 +3,11 @@
 import { Button, Card, FieldLabel, Input, PageHeader, Select } from "@/components/ui";
 import { useApp } from "@/context/app-context";
 import { roleLabel } from "@/lib/format";
+import { useState } from "react";
 
 export function SettingsView() {
   const { me, role, setRole } = useApp();
+  const [saved, setSaved] = useState(false);
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -68,7 +70,15 @@ export function SettingsView() {
               </Select>
             </div>
           </div>
-          <Button className="mt-5">Save changes</Button>
+          <Button
+            className="mt-5"
+            onClick={() => {
+              setSaved(true);
+              window.setTimeout(() => setSaved(false), 1400);
+            }}
+          >
+            {saved ? "Saved" : "Save changes"}
+          </Button>
         </Card>
       </div>
     </div>

@@ -59,7 +59,7 @@ export function Button({
         size === "lg" && "h-11 rounded-[11px] px-5 text-sm",
         size === "icon" && "size-9 rounded-[10px]",
         variant === "primary" &&
-          "bg-accent text-white shadow-[0_1px_0_rgba(255,255,255,0.18)_inset] hover:bg-[#0b6b63]",
+          "bg-accent text-white shadow-[0_1px_0_rgba(255,255,255,0.18)_inset] hover:bg-[#0b6b63] hover:shadow-[0_8px_18px_rgba(14,124,114,0.28)]",
         variant === "secondary" &&
           "border border-line bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50",
         variant === "ghost" && "text-slate-600 hover:bg-slate-100",
@@ -132,7 +132,7 @@ export function StatusBadge({ status }: { status: SessionStatus }) {
     scheduled: { tone: "teal" as const, label: "Scheduled" },
     draft: { tone: "amber" as const, label: "Draft" },
     completed: { tone: "slate" as const, label: "Completed" },
-    cancelled: { tone: "amber" as const, label: "Cancelled" },
+    cancelled: { tone: "slate" as const, label: "Cancelled" },
   };
   const item = map[status];
   return (
@@ -184,7 +184,7 @@ export function FieldLabel({ children }: { children: ReactNode }) {
 }
 
 const fieldClass =
-  "h-10 w-full rounded-[10px] border border-line bg-white px-3 text-[13px] text-slate-900 outline-none placeholder:text-slate-400 transition-shadow focus:border-accent focus:ring-2 focus:ring-accent/15";
+  "h-10 w-full rounded-[10px] border border-line bg-white px-3 text-[13px] text-slate-900 outline-none placeholder:text-slate-400 transition-[border-color,box-shadow,background-color] duration-150 focus:border-accent focus:ring-2 focus:ring-accent/15";
 
 export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
   return <input className={cn(fieldClass, className)} {...props} />;
@@ -304,6 +304,43 @@ export function ScoreBar({
       >
         {value.toFixed(1)}
       </span>
+    </div>
+  );
+}
+
+export function ScorePicker({
+  value,
+  onChange,
+  max = 5,
+  invert = false,
+}: {
+  value: number;
+  onChange: (n: number) => void;
+  max?: number;
+  invert?: boolean;
+}) {
+  return (
+    <div className="flex gap-1" role="radiogroup">
+      {Array.from({ length: max }, (_, i) => i + 1).map((n) => (
+        <button
+          key={n}
+          type="button"
+          role="radio"
+          aria-checked={value === n}
+          onClick={() => onChange(n)}
+          className={cn(
+            "ui-press grid size-8 place-items-center rounded-[9px] text-[12px] font-medium tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40",
+            value === n && "score-pop",
+            value === n
+              ? "bg-accent text-white shadow-[0_0_0_3px_rgba(14,124,114,0.28)]"
+              : invert
+                ? "bg-white/10 text-slate-300 hover:bg-white/[0.16] hover:text-white"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-ink",
+          )}
+        >
+          {n}
+        </button>
+      ))}
     </div>
   );
 }

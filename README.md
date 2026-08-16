@@ -6,7 +6,7 @@ This phase is **UI and application structure only**. Video, audio, screen sharin
 
 Built with **Next.js 16** (App Router), React 19, TypeScript, and Tailwind CSS v4.
 
-## Run locally1
+## Run locally
 
 ```bash
 npm install

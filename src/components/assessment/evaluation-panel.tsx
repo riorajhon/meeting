@@ -1,7 +1,7 @@
 "use client";
 
 import { Glyph } from "@/components/icons";
-import { Badge, Button, ScoreBar, Textarea } from "@/components/ui";
+import { Badge, Button, ScoreBar, ScorePicker, Textarea } from "@/components/ui";
 import { useApp } from "@/context/app-context";
 import { cn } from "@/lib/cn";
 import { defaultScorecard, questionsByType } from "@/lib/data";
@@ -27,6 +27,7 @@ export function EvaluationPanel({ session }: { session: Session }) {
   );
   const [scores, setScores] = useState(defaultScorecard);
   const [rec, setRec] = useState<"strong_yes" | "yes" | "lean_yes" | "no" | "hold">("lean_yes");
+  const [saved, setSaved] = useState(false);
   const isEvaluator = role !== "candidate";
 
   const overall = useMemo(
@@ -44,8 +45,8 @@ export function EvaluationPanel({ session }: { session: Session }) {
             className={cn(
               "ui-press flex h-8 flex-1 items-center justify-center gap-1.5 rounded-[9px] text-[11px] font-medium",
               tab === id
-                ? "bg-white/[0.09] text-white"
-                : "text-slate-500 hover:bg-white/[0.05] hover:text-slate-200",
+                ? "bg-accent/18 text-white ring-1 ring-accent/45"
+                : "text-slate-500 ring-1 ring-transparent hover:bg-white/[0.05] hover:text-slate-200",
             )}
           >
             <span
@@ -60,7 +61,7 @@ export function EvaluationPanel({ session }: { session: Session }) {
           </button>
         ))}
       </div>
-      <div className="min-h-0 flex-1 overflow-auto p-4">
+      <div key={tab} className="panel-in min-h-0 flex-1 overflow-auto p-4">
         {!isEvaluator ? (
           <p className="rounded-[12px] border border-white/[0.06] bg-white/[0.04] p-3 text-[13px] leading-6 text-slate-400">
             Evaluation tools are hidden from the candidate view. Switch role to Company, Client, or
@@ -74,22 +75,11 @@ export function EvaluationPanel({ session }: { session: Session }) {
               <div key={q.id}>
                 <p className="mb-2 text-[13px] font-medium text-white">{q.prompt}</p>
                 {q.kind === "scale" ? (
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <button
-                        key={n}
-                        onClick={() => setAnswers((a) => ({ ...a, [q.id]: n }))}
-                        className={cn(
-                          "ui-press size-8 rounded-[9px] text-xs",
-                          answers[q.id] === n
-                            ? "bg-accent text-white"
-                            : "bg-white/10 text-slate-300 hover:bg-white/15",
-                        )}
-                      >
-                        {n}
-                      </button>
-                    ))}
-                  </div>
+                  <ScorePicker
+                    invert
+                    value={Number(answers[q.id] || 0)}
+                    onChange={(n) => setAnswers((a) => ({ ...a, [q.id]: n }))}
+                  />
                 ) : null}
                 {q.kind === "choice" ? (
                   <div className="flex flex-wrap gap-2">
@@ -100,7 +90,7 @@ export function EvaluationPanel({ session }: { session: Session }) {
                         className={cn(
                           "ui-press rounded-full px-3 py-1 text-xs",
                           answers[q.id] === opt
-                            ? "bg-accent text-white"
+                            ? "score-pop bg-accent text-white shadow-[0_0_0_3px_rgba(14,124,114,0.28)]"
                             : "bg-white/10 text-slate-300 hover:bg-white/15",
                         )}
                       >
@@ -137,23 +127,18 @@ export function EvaluationPanel({ session }: { session: Session }) {
             </div>
             {scores.map((dim) => (
               <div key={dim.id}>
-                <div className="mb-1 flex items-center justify-between text-[13px]">
+                <div className="mb-2 flex items-center justify-between text-[13px]">
                   <span className="text-slate-200">{dim.label}</span>
                   <span className="tabular-nums text-slate-400">{dim.score}</span>
                 </div>
-                <input
-                  type="range"
-                  min={1}
-                  max={5}
+                <ScorePicker
+                  invert
                   value={dim.score}
-                  onChange={(e) =>
+                  onChange={(n) =>
                     setScores((prev) =>
-                      prev.map((s) =>
-                        s.id === dim.id ? { ...s, score: Number(e.target.value) } : s,
-                      ),
+                      prev.map((s) => (s.id === dim.id ? { ...s, score: n } : s)),
                     )
                   }
-                  className="w-full accent-accent"
                 />
               </div>
             ))}
@@ -167,14 +152,23 @@ export function EvaluationPanel({ session }: { session: Session }) {
                   onClick={() => setRec(r)}
                   className={cn(
                     "ui-press rounded-full px-3 py-1 text-[11px]",
-                    rec === r ? "bg-accent text-white" : "bg-white/10 text-slate-300 hover:bg-white/15",
+                    rec === r && "score-pop",
+                    rec === r ? "bg-accent text-white shadow-[0_0_0_3px_rgba(14,124,114,0.28)]" : "bg-white/10 text-slate-300 hover:bg-white/15",
                   )}
                 >
                   {recLabel[r]}
                 </button>
               ))}
             </div>
-            <Button className="w-full">Save scorecard (local)</Button>
+            <Button
+              className="w-full"
+              onClick={() => {
+                setSaved(true);
+                window.setTimeout(() => setSaved(false), 1400);
+              }}
+            >
+              {saved ? "Saved" : "Save scorecard (local)"}
+            </Button>
           </div>
         ) : null}
 

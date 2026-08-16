@@ -68,7 +68,7 @@ export function CodeWorkspace() {
               <div
                 key={t.name}
                 className={cn(
-                  "rounded-lg px-3 py-2 text-xs",
+                  "panel-in rounded-lg px-3 py-2 text-xs",
                   t.pass ? "bg-emerald-500/15 text-emerald-300" : "bg-rose-500/15 text-rose-300",
                 )}
               >
@@ -83,13 +83,13 @@ export function CodeWorkspace() {
           <select
             value={lang}
             onChange={(e) => setLang(e.target.value)}
-            className="rounded-lg bg-white/5 px-2 py-1 text-xs text-slate-200"
+            className="rounded-lg bg-white/5 px-2 py-1 text-xs text-slate-200 outline-none ring-0 transition-[box-shadow] focus:ring-2 focus:ring-accent/30"
           >
             {["TypeScript", "JavaScript", "Python", "Go"].map((l) => (
               <option key={l}>{l}</option>
             ))}
           </select>
-          <Button size="sm" onClick={run} disabled={running}>
+          <Button size="sm" onClick={run} disabled={running} aria-busy={running}>
             {running ? "Running tests…" : "Run tests"}
           </Button>
         </div>

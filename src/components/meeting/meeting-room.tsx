@@ -107,6 +107,13 @@ export function MeetingRoom({ sessionId }: { sessionId: string }) {
     ] as const
   );
 
+  function workspaceHint(id: Center) {
+    if (id === "gallery" || id === "speaker") return "People — meeting stage";
+    if (id === "screen") return "Share — shared surface";
+    if (id === "code") return "Code — live coding";
+    return "Board — system design";
+  }
+
   return (
     <div className="room-shell flex h-screen min-h-screen flex-col text-slate-100">
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/[0.06] px-3 sm:px-4">
@@ -127,19 +134,24 @@ export function MeetingRoom({ sessionId }: { sessionId: string }) {
           </p>
         </div>
         <span className="hidden items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.04] px-2.5 py-1 text-[12px] tabular-nums text-slate-300 sm:inline-flex">
-          <span className={cn("size-1.5 rounded-full bg-rose-400", session.status === "live" && "live-dot")} />
-          {clock}
+          <span
+            className={cn(
+              "size-1.5 rounded-full",
+              session.status === "live" ? "bg-rose-400 live-dot" : "bg-slate-500",
+            )}
+          />
+          {session.status === "live" ? clock : session.status === "completed" ? "Replay" : typeLabel[session.type]}
         </span>
         {recording ? (
           <span className="hidden items-center gap-1.5 rounded-full bg-rose-500/12 px-2.5 py-1 text-[11px] font-medium text-rose-200 sm:inline-flex">
-            <Circle size={7} className="fill-rose-400 text-rose-400" strokeWidth={0} />
+            <span className="size-1.5 rounded-full bg-rose-400 live-dot" />
             Recording
           </span>
         ) : null}
       </header>
 
       <div className="flex min-h-0 flex-1">
-        <nav className="hidden w-[84px] shrink-0 flex-col border-r border-white/[0.06] bg-[#080b11] py-3 md:flex">
+        <nav className="room-rail hidden w-[92px] shrink-0 flex-col border-r border-white/[0.06] py-3 md:flex">
           <p className="mb-1 px-3 text-[9px] font-semibold tracking-[0.16em] text-slate-600 uppercase">
             Room
           </p>
@@ -149,6 +161,7 @@ export function MeetingRoom({ sessionId }: { sessionId: string }) {
                 key={id}
                 icon={Icon}
                 label={label}
+                hint={workspaceHint(id)}
                 selected={center === id || (id === "gallery" && center === "speaker")}
                 onClick={() => {
                   setCenter(id);
@@ -167,6 +180,7 @@ export function MeetingRoom({ sessionId }: { sessionId: string }) {
                 key={id}
                 icon={Icon}
                 label={label}
+                hint={id === "chat" ? "Chat — room discussion" : "Evaluate — live scorecard"}
                 selected={side === id}
                 onClick={() => setSide(id)}
               />
@@ -181,6 +195,7 @@ export function MeetingRoom({ sessionId }: { sessionId: string }) {
                 key={id}
                 icon={Icon}
                 label={label}
+                hint={workspaceHint(id)}
                 compact
                 selected={center === id || (id === "gallery" && center === "speaker")}
                 onClick={() => {
@@ -194,6 +209,7 @@ export function MeetingRoom({ sessionId }: { sessionId: string }) {
                 key={id}
                 icon={Icon}
                 label={label}
+                hint={id === "chat" ? "Chat — room discussion" : "Evaluate — live scorecard"}
                 compact
                 selected={mobilePanel && side === id}
                 onClick={() => {
@@ -213,30 +229,50 @@ export function MeetingRoom({ sessionId }: { sessionId: string }) {
                 <h1 className="text-[15px] font-semibold tracking-tight text-white">{stage.title}</h1>
               </div>
               <p className="hidden text-[11px] text-slate-500 sm:block">
-                Meeting → Assessment → Evaluation
+                <span className={cn(center === "gallery" || center === "speaker" || center === "screen" ? "text-slate-200" : "text-slate-500")}>
+                  Meeting
+                </span>
+                {" · "}
+                <span className={cn(center === "code" || center === "board" ? "text-slate-200" : "text-slate-500")}>
+                  Assessment
+                </span>
+                {" · "}
+                <span className={cn(side === "eval" ? "text-slate-200" : "text-slate-500")}>Evaluation</span>
               </p>
             </div>
-            <div className="room-stage min-h-0 flex-1 overflow-hidden rounded-[18px] border border-white/[0.07] p-2 sm:p-2.5">
-              {center === "gallery" || center === "speaker" ? (
-                <VideoGrid
-                  participants={participants}
-                  layout={layout}
-                  meId={me.id}
-                  cam={cam}
-                />
-              ) : null}
-              {center === "screen" ? <ScreenSharePreview sharing={sharing} /> : null}
-              {center === "code" ? <CodeWorkspace /> : null}
-              {center === "board" ? <Whiteboard /> : null}
+            <div className="room-stage min-h-0 flex-1 overflow-hidden rounded-[18px] border border-white/[0.08] p-2 sm:p-3">
+              <div key={center} className="panel-in h-full min-h-0">
+                {center === "gallery" || center === "speaker" ? (
+                  <VideoGrid
+                    participants={participants}
+                    layout={layout}
+                    meId={me.id}
+                    cam={cam}
+                  />
+                ) : null}
+                {center === "screen" ? <ScreenSharePreview sharing={sharing} /> : null}
+                {center === "code" ? <CodeWorkspace /> : null}
+                {center === "board" ? <Whiteboard /> : null}
+              </div>
             </div>
           </section>
         </div>
 
+        <button
+          type="button"
+          aria-label="Close panel"
+          onClick={() => setMobilePanel(false)}
+          className={cn(
+            "fixed inset-0 z-20 bg-black/50 md:hidden",
+            mobilePanel ? "overlay-in opacity-100" : "pointer-events-none opacity-0",
+          )}
+        />
         <aside
           className={cn(
-            "flex w-[340px] shrink-0 flex-col border-l border-white/[0.06] bg-[#0c1017]",
-            "max-md:fixed max-md:inset-y-0 max-md:right-0 max-md:z-30 max-md:shadow-[-24px_0_48px_rgba(0,0,0,0.45)]",
-            mobilePanel ? "max-md:flex" : "max-md:hidden",
+            "room-panel flex w-[336px] shrink-0 flex-col border-l border-white/[0.06]",
+            "max-md:fixed max-md:inset-y-0 max-md:right-0 max-md:z-30 max-md:flex max-md:shadow-[-24px_0_48px_rgba(0,0,0,0.45)]",
+            "max-md:transition-transform max-md:duration-300 max-md:ease-[cubic-bezier(0.22,1,0.36,1)]",
+            mobilePanel ? "max-md:translate-x-0" : "max-md:translate-x-full",
             "md:flex",
           )}
         >
@@ -246,6 +282,7 @@ export function MeetingRoom({ sessionId }: { sessionId: string }) {
                 key={id}
                 icon={Icon}
                 label={label}
+                hint={id === "chat" ? "Chat — room discussion" : "Evaluate — live scorecard"}
                 compact
                 className="flex-1"
                 selected={side === id}
@@ -254,46 +291,49 @@ export function MeetingRoom({ sessionId }: { sessionId: string }) {
             ))}
             <button
               type="button"
-              className="ui-press ml-auto rounded-[10px] px-2.5 py-1.5 text-[12px] font-medium text-slate-400 hover:bg-white/[0.06] hover:text-white md:hidden"
+              className="ui-press ml-1 rounded-[10px] px-2.5 py-1.5 text-[12px] font-medium text-slate-400 hover:bg-white/[0.06] hover:text-white md:hidden"
               onClick={() => setMobilePanel(false)}
             >
               Close
             </button>
           </div>
-          {side === "chat" ? (
-            <ChatPeople
-              session={session}
-              messages={messages}
-              draft={draft}
-              setDraft={setDraft}
-              onSend={send}
-            />
-          ) : (
-            <EvaluationPanel session={session} />
-          )}
+          <div key={side} className="panel-in flex min-h-0 flex-1 flex-col">
+            {side === "chat" ? (
+              <ChatPeople
+                session={session}
+                messages={messages}
+                draft={draft}
+                setDraft={setDraft}
+                onSend={send}
+              />
+            ) : (
+              <EvaluationPanel session={session} />
+            )}
+          </div>
         </aside>
       </div>
 
-      <footer className="flex h-[76px] shrink-0 items-center justify-center gap-1 border-t border-white/[0.06] bg-[#080b11] px-3">
-        <div className="flex items-center">
+      <footer className="flex h-[80px] shrink-0 items-center justify-center border-t border-white/[0.06] bg-[#06080c] px-3">
+        <div className="room-dock flex items-center gap-0.5 rounded-[18px] border border-white/[0.06] px-1.5 py-1">
           <LabeledControl
             icon={mic ? Mic : MicOff}
             label="Mic"
+            hint={mic ? "Mute microphone" : "Unmute microphone"}
             on={mic}
             onClick={() => setMic((v) => !v)}
           />
           <LabeledControl
             icon={cam ? Video : VideoOff}
             label="Camera"
+            hint={cam ? "Turn camera off" : "Turn camera on"}
             on={cam}
             onClick={() => setCam((v) => !v)}
           />
-        </div>
-        <div className="mx-2 hidden h-8 w-px bg-white/[0.08] sm:block" />
-        <div className="flex items-center">
+          <div className="mx-1 hidden h-8 w-px bg-white/[0.08] sm:block" />
           <LabeledControl
             icon={sharing ? MonitorUp : ScreenShare}
             label="Share"
+            hint={sharing ? "Stop sharing" : "Share screen"}
             selected={sharing}
             onClick={() => {
               setSharing((v) => !v);
@@ -303,23 +343,24 @@ export function MeetingRoom({ sessionId }: { sessionId: string }) {
           <LabeledControl
             icon={LayoutGrid}
             label={layout === "grid" ? "Gallery" : "Speaker"}
-            selected={layout === "grid"}
+            hint={layout === "grid" ? "Switch to speaker layout" : "Switch to gallery layout"}
             onClick={() => setLayout((l) => (l === "grid" ? "speaker" : "grid"))}
           />
           <LabeledControl
             icon={Circle}
             label="Record"
+            hint={recording ? "Stop recording" : "Start recording"}
             on={!recording}
             onClick={() => setRecording((v) => !v)}
           />
+          <Link
+            href={`/sessions/${session.id}`}
+            className="ui-press ml-2 inline-flex h-10 items-center gap-2 rounded-[12px] bg-rose-600 px-4 text-[13px] font-medium text-white hover:bg-rose-500"
+          >
+            <Glyph icon={PhoneOff} size="md" />
+            Leave
+          </Link>
         </div>
-        <Link
-          href={`/sessions/${session.id}`}
-          className="ui-press ml-3 inline-flex h-10 items-center gap-2 rounded-[12px] bg-rose-600 px-4 text-[13px] font-medium text-white hover:bg-rose-500"
-        >
-          <Glyph icon={PhoneOff} size="md" />
-          Leave
-        </Link>
       </footer>
     </div>
   );
@@ -426,17 +467,21 @@ function ScreenSharePreview({ sharing }: { sharing: boolean }) {
         <span className="font-medium text-slate-700">Presenting · Meridian Labs — architecture overview.pdf</span>
         <span>Simulated share</span>
       </div>
-      <div className="grid flex-1 gap-4 bg-slate-50 p-6 md:grid-cols-3">
-        {["Meet", "Assess", "Decide"].map((col, i) => (
+      <div className="grid flex-1 gap-4 bg-slate-50 p-6 md:grid-cols-2">
+        {["Meet", "Assess", "Evaluate", "Decide"].map((col, i) => (
           <div key={col} className="rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="text-[10px] font-medium tracking-[0.14em] text-teal-800 uppercase">{col}</p>
-            <p className="mt-2 text-lg font-semibold">{["Sessions", "Assessments", "Scorecards"][i]}</p>
+            <p className="text-[10px] font-medium tracking-[0.14em] text-teal-800 uppercase">
+              {String(i + 1).padStart(2, "0")} · {col}
+            </p>
+            <p className="mt-2 text-lg font-semibold">
+              {["Sessions", "Code & board", "Scorecards", "Decision briefs"][i]}
+            </p>
             <p className="mt-2 text-sm text-slate-500">
               Mock diagram tile for investor and client screen-share walkthroughs.
             </p>
           </div>
         ))}
-        <div className="rounded-2xl bg-[#0b1220] p-4 text-slate-200 md:col-span-3">
+        <div className="rounded-2xl bg-[#0b1220] p-4 text-slate-200 md:col-span-2">
           <p className="text-sm font-medium">Data plane (placeholder)</p>
           <p className="mt-2 text-sm text-slate-400">
             No third-party meeting SDK. This surface stands in for screen share until the internal

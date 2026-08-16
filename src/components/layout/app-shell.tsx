@@ -1,6 +1,6 @@
 "use client";
 
-import { Glyph } from "@/components/icons";
+import { Glyph, Tooltip } from "@/components/icons";
 import { AppProvider, useApp } from "@/context/app-context";
 import { cn } from "@/lib/cn";
 import { roleLabel } from "@/lib/format";
@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 const nav = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -63,7 +63,24 @@ function PlatformFrame({ children }: { children: ReactNode }) {
   const { me, role, setRole } = useApp();
   const [open, setOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
+  const notesRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!notesOpen) return;
+    function onDoc(e: MouseEvent) {
+      if (!notesRef.current?.contains(e.target as Node)) setNotesOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setNotesOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [notesOpen]);
 
   const active = useMemo(() => {
     return nav.find((item) =>
@@ -85,13 +102,15 @@ function PlatformFrame({ children }: { children: ReactNode }) {
           <Link href="/" className="flex items-center gap-2.5 rounded-lg px-1 py-1 hover:bg-white/5">
             <BrandLockup subtitle="Meetings & assessments" size={48} wordmarkClassName="text-[15px]" />
           </Link>
-          <button
-            className="grid size-8 place-items-center rounded-lg text-slate-400 hover:bg-white/5 hover:text-white lg:hidden"
-            onClick={() => setOpen(false)}
-            aria-label="Close menu"
-          >
-            <Glyph icon={X} size="md" />
-          </button>
+          <Tooltip content="Close menu">
+            <button
+              className="ui-press grid size-8 place-items-center rounded-lg text-slate-400 hover:bg-white/5 hover:text-white lg:hidden"
+              onClick={() => setOpen(false)}
+              aria-label="Close menu"
+            >
+              <Glyph icon={X} size="md" />
+            </button>
+          </Tooltip>
         </div>
 
         <p className="kicker px-5 pb-2 pt-3 text-slate-500">Workspace</p>
@@ -132,13 +151,23 @@ function PlatformFrame({ children }: { children: ReactNode }) {
           <Link
             href="/settings"
             className={cn(
-              "ui-press flex h-9 items-center gap-2.5 rounded-[10px] px-2.5 text-[13px]",
+              "ui-press relative flex h-9 items-center gap-2.5 rounded-[10px] px-2.5 text-[13px]",
               settingsActive
                 ? "bg-white/[0.08] font-medium text-white"
                 : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100",
             )}
           >
-            <Glyph icon={Settings} size="md" />
+            {settingsActive ? (
+              <span className="absolute inset-y-1.5 left-0 w-[2px] rounded-full bg-accent" />
+            ) : null}
+            <span
+              className={cn(
+                "grid size-7 place-items-center rounded-[8px]",
+                settingsActive ? "bg-accent/20 text-white" : "text-slate-400",
+              )}
+            >
+              <Glyph icon={Settings} size="md" />
+            </span>
             Settings
           </Link>
         </div>
@@ -151,7 +180,7 @@ function PlatformFrame({ children }: { children: ReactNode }) {
                 key={r}
                 onClick={() => setRole(r)}
                 className={cn(
-                  "h-7 rounded-lg px-2 text-[11px] font-medium transition-colors",
+                  "ui-press h-7 rounded-lg px-2 text-[11px] font-medium",
                   role === r
                     ? "bg-accent text-white"
                     : "bg-white/[0.04] text-slate-400 hover:bg-white/[0.08] hover:text-white",
@@ -176,7 +205,7 @@ function PlatformFrame({ children }: { children: ReactNode }) {
 
       {open ? (
         <button
-          className="fixed inset-0 z-30 bg-slate-900/40 lg:hidden"
+          className="overlay-in fixed inset-0 z-30 bg-slate-900/40 lg:hidden"
           onClick={() => setOpen(false)}
           aria-label="Close overlay"
         />
@@ -184,13 +213,15 @@ function PlatformFrame({ children }: { children: ReactNode }) {
 
       <div className="lg:pl-[248px]">
         <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-line bg-white/90 px-4 backdrop-blur-md sm:px-6">
-          <button
-            className="grid size-9 place-items-center rounded-[10px] border border-line text-slate-600 hover:bg-slate-50 lg:hidden"
-            onClick={() => setOpen(true)}
-            aria-label="Open menu"
-          >
-            <Glyph icon={Menu} size="md" />
-          </button>
+          <Tooltip content="Open menu">
+            <button
+              className="ui-press grid size-9 place-items-center rounded-[10px] border border-line text-slate-600 hover:bg-slate-50 lg:hidden"
+              onClick={() => setOpen(true)}
+              aria-label="Open menu"
+            >
+              <Glyph icon={Menu} size="md" />
+            </button>
+          </Tooltip>
           <Link href="/" className="flex items-center gap-2 lg:hidden">
             <BrandMark size={40} />
             <span className="text-[15px] font-semibold tracking-tight text-ink">Caliber</span>
@@ -210,19 +241,22 @@ function PlatformFrame({ children }: { children: ReactNode }) {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <div className="relative">
-              <Button
-                variant="secondary"
-                size="icon"
-                onClick={() => setNotesOpen((v) => !v)}
-                aria-label="Notifications"
-                className={notesOpen ? "border-slate-300 bg-slate-50" : ""}
-              >
-                <Glyph icon={Bell} size="md" />
-              </Button>
+            <div className="relative" ref={notesRef}>
+              <Tooltip content="Notifications">
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  onClick={() => setNotesOpen((v) => !v)}
+                  aria-label="Notifications"
+                  aria-expanded={notesOpen}
+                  className={notesOpen ? "border-slate-300 bg-slate-50" : ""}
+                >
+                  <Glyph icon={Bell} size="md" />
+                </Button>
+              </Tooltip>
               <span className="absolute right-2 top-2 size-1.5 rounded-full bg-accent" />
               {notesOpen ? (
-                <div className="absolute right-0 top-12 w-80 overflow-hidden rounded-[14px] border border-line bg-white shadow-[0_16px_40px_rgba(17,19,24,0.12)]">
+                <div className="dropdown-in absolute right-0 top-12 w-80 overflow-hidden rounded-[14px] border border-line bg-white shadow-[0_16px_40px_rgba(17,19,24,0.12)]">
                   <div className="border-b border-line px-3.5 py-2.5">
                     <p className="text-[13px] font-semibold">Notifications</p>
                   </div>
@@ -231,7 +265,7 @@ function PlatformFrame({ children }: { children: ReactNode }) {
                       key={n.id}
                       href={n.href}
                       onClick={() => setNotesOpen(false)}
-                      className="block px-3.5 py-3 hover:bg-slate-50"
+                      className="ui-press block px-3.5 py-3 hover:bg-slate-50"
                     >
                       <p className="text-[13px] font-medium text-slate-800">{n.title}</p>
                       <p className="mt-0.5 text-xs text-muted">{n.body}</p>

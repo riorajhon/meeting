@@ -85,7 +85,7 @@ export function NewSessionView() {
           <button
             key={label}
             onClick={() => setStep(i)}
-            className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors ${
+            className={`ui-press flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-medium ${
               i === step
                 ? "bg-ink text-white"
                 : i < step
@@ -106,7 +106,7 @@ export function NewSessionView() {
               <button
                 key={key}
                 onClick={() => setType(key)}
-                className={`rounded-[14px] border p-4 text-left transition-colors ${
+                className={`ui-press rounded-[14px] border p-4 text-left ${
                   type === key
                     ? "border-accent bg-accent-soft"
                     : "border-line hover:border-slate-300"
@@ -168,7 +168,7 @@ export function NewSessionView() {
                       on ? prev.filter((id) => id !== person.id) : [...prev, person.id],
                     )
                   }
-                  className={`flex items-center justify-between rounded-xl border px-3 py-2.5 text-left ${
+                  className={`ui-press flex items-center justify-between rounded-xl border px-3 py-2.5 text-left ${
                     on ? "border-accent bg-accent-soft" : "border-line hover:border-slate-300"
                   }`}
                 >
@@ -197,7 +197,7 @@ export function NewSessionView() {
                       on ? prev.filter((id) => id !== mod.id) : [...prev, mod.id],
                     )
                   }
-                  className={`flex items-center justify-between rounded-xl border px-3 py-2.5 text-left ${
+                  className={`ui-press flex items-center justify-between rounded-xl border px-3 py-2.5 text-left ${
                     on ? "border-accent bg-accent-soft" : "border-line hover:border-slate-300"
                   }`}
                 >
