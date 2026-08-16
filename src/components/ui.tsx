@@ -1,3 +1,4 @@
+import { Glyph } from "@/components/icons";
 import { cn } from "@/lib/cn";
 import { avatarColor, initials } from "@/lib/format";
 import type { SessionStatus } from "@/lib/types";
@@ -28,7 +29,7 @@ export function Card({
         "rounded-[14px] border border-line bg-card shadow-[0_1px_0_rgba(17,19,24,0.03)]",
         padded && "p-5",
         hover &&
-          "transition-[border-color,box-shadow] duration-150 hover:border-slate-300 hover:shadow-[0_10px_28px_rgba(17,19,24,0.05)]",
+          "ui-press hover:border-slate-300 hover:shadow-[0_10px_28px_rgba(17,19,24,0.05)]",
         className,
       )}
     >
@@ -52,7 +53,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center gap-2 font-medium whitespace-nowrap transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 disabled:pointer-events-none disabled:opacity-45",
+        "inline-flex cursor-pointer items-center justify-center gap-2 font-medium whitespace-nowrap ui-press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 disabled:pointer-events-none disabled:opacity-45",
         size === "sm" && "h-8 rounded-lg px-3 text-xs",
         size === "md" && "h-9 rounded-[10px] px-3.5 text-[13px]",
         size === "lg" && "h-11 rounded-[11px] px-5 text-sm",
@@ -262,7 +263,7 @@ export function EmptyState({
     <div className="rounded-[14px] border border-dashed border-line bg-white px-6 py-16 text-center">
       {Icon ? (
         <span className="mx-auto mb-4 grid size-11 place-items-center rounded-full bg-slate-50 text-slate-500">
-          <Icon size={20} />
+          <Glyph icon={Icon} size="lg" />
         </span>
       ) : null}
       <p className="text-sm font-medium text-slate-800">{title}</p>
@@ -271,16 +272,36 @@ export function EmptyState({
   );
 }
 
-export function ScoreBar({ value, max = 5 }: { value: number; max?: number }) {
+export function ScoreBar({
+  value,
+  max = 5,
+  className,
+  tone = "accent",
+  invert = false,
+}: {
+  value: number;
+  max?: number;
+  className?: string;
+  tone?: "accent" | "ink";
+  invert?: boolean;
+}) {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+    <div className={cn("flex items-center gap-2.5", className)}>
+      <div className={cn("h-1.5 flex-1 overflow-hidden rounded-full", invert ? "bg-white/10" : "bg-slate-100")}>
         <div
-          className="h-full rounded-full bg-accent"
+          className={cn(
+            "h-full rounded-full transition-[width] duration-500 ease-out",
+            invert || tone === "accent" ? "bg-accent" : "bg-ink",
+          )}
           style={{ width: `${(value / max) * 100}%` }}
         />
       </div>
-      <span className="w-8 text-right text-xs font-medium tabular-nums text-slate-600">
+      <span
+        className={cn(
+          "w-8 text-right text-xs font-medium tabular-nums",
+          invert ? "text-slate-300" : "text-slate-600",
+        )}
+      >
         {value.toFixed(1)}
       </span>
     </div>
@@ -301,7 +322,7 @@ export function IconTile({
         className,
       )}
     >
-      <Icon size={16} />
+      <Glyph icon={Icon} size="md" />
     </span>
   );
 }

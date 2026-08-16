@@ -48,9 +48,9 @@ export function CodeWorkspace() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3 lg:flex-row">
-      <aside className="w-full shrink-0 overflow-auto rounded-[14px] border border-white/10 bg-[#121820] p-4 text-slate-200 lg:w-80">
-        <p className="text-xs uppercase tracking-wide text-slate-400">Coding assessment</p>
+    <div className="flex h-full min-h-0 flex-col gap-2.5 lg:flex-row">
+      <aside className="w-full shrink-0 overflow-auto rounded-[14px] border border-white/[0.07] bg-[#121820] p-4 text-slate-200 lg:w-80">
+        <p className="text-[10px] font-semibold tracking-[0.14em] text-slate-500 uppercase">Coding assessment</p>
         <h3 className="mt-1 font-semibold text-white">Merge calendar intervals</h3>
         <p className="mt-3 text-sm leading-6 text-slate-300">
           Given meeting ranges <code className="text-teal-300">[start, end]</code>, return a
@@ -78,8 +78,8 @@ export function CodeWorkspace() {
           </div>
         ) : null}
       </aside>
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-white/10 bg-[#0d1520]">
-        <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-white/[0.07] bg-[#0d1520]">
+        <div className="flex items-center justify-between border-b border-white/[0.07] px-3 py-2">
           <select
             value={lang}
             onChange={(e) => setLang(e.target.value)}

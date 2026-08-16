@@ -88,6 +88,13 @@ export type Session = {
   recordingEnabled: boolean;
 };
 
+export type ReportRisk = {
+  id: string;
+  label: string;
+  detail: string;
+  level: "low" | "medium" | "high";
+};
+
 export type Report = {
   id: string;
   sessionId: string;
@@ -98,6 +105,12 @@ export type Report = {
   dimensions: ScoreDimension[];
   publishedAt: string;
   visibility: "private" | "shared";
+  subject: string;
+  distribution: string;
+  findings: string[];
+  risks: ReportRisk[];
+  nextSteps: string[];
+  evaluatorIds: string[];
 };
 
 export type ChatMessage = {

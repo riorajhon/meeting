@@ -1,5 +1,6 @@
 "use client";
 
+import { Glyph } from "@/components/icons";
 import { Button, Card, FieldLabel, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { useApp } from "@/context/app-context";
 import { people } from "@/lib/data";
@@ -92,7 +93,7 @@ export function NewSessionView() {
                   : "border border-line bg-white text-slate-500 hover:border-slate-300"
             }`}
           >
-            {i < step ? <Check className="size-3" /> : <span>{i + 1}</span>}
+            {i < step ? <Glyph icon={Check} size="xs" /> : <span>{i + 1}</span>}
             {label}
           </button>
         ))}
@@ -177,7 +178,7 @@ export function NewSessionView() {
                       {person.title} · {person.role}
                     </span>
                   </span>
-                  {on ? <Check className="size-4 text-teal-800" /> : null}
+                  {on ? <Glyph icon={Check} size="md" className="text-teal-800" /> : null}
                 </button>
               );
             })}
@@ -204,7 +205,7 @@ export function NewSessionView() {
                     <span className="block text-sm font-medium">{mod.label}</span>
                     <span className="block text-xs text-slate-500">{mod.hint}</span>
                   </span>
-                  {on ? <Check className="size-4 text-teal-800" /> : null}
+                  {on ? <Glyph icon={Check} size="md" className="text-teal-800" /> : null}
                 </button>
               );
             })}

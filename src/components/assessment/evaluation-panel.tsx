@@ -1,23 +1,32 @@
 "use client";
 
+import { Glyph } from "@/components/icons";
 import { Badge, Button, ScoreBar, Textarea } from "@/components/ui";
 import { useApp } from "@/context/app-context";
-import { defaultScorecard, questionsByType } from "@/lib/data";
-import type { Session } from "@/lib/types";
 import { cn } from "@/lib/cn";
+import { defaultScorecard, questionsByType } from "@/lib/data";
+import { recLabel } from "@/lib/format";
+import type { Session } from "@/lib/types";
+import { ClipboardList, ListChecks, StickyNote } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type Tab = "questions" | "scorecard" | "notes";
 
+const tabs: Array<[Tab, string, typeof ListChecks]> = [
+  ["questions", "Questions", ListChecks],
+  ["scorecard", "Scorecard", ClipboardList],
+  ["notes", "Notes", StickyNote],
+];
+
 export function EvaluationPanel({ session }: { session: Session }) {
   const { notes, setNote, role } = useApp();
-  const [tab, setTab] = useState<Tab>("questions");
+  const [tab, setTab] = useState<Tab>("scorecard");
   const seed = questionsByType[session.type];
   const [answers, setAnswers] = useState(() =>
     Object.fromEntries(seed.map((q) => [q.id, q.answer ?? ""])),
   );
   const [scores, setScores] = useState(defaultScorecard);
-  const [rec, setRec] = useState("lean_yes");
+  const [rec, setRec] = useState<"strong_yes" | "yes" | "lean_yes" | "no" | "hold">("lean_yes");
   const isEvaluator = role !== "candidate";
 
   const overall = useMemo(
@@ -27,29 +36,33 @@ export function EvaluationPanel({ session }: { session: Session }) {
 
   return (
     <div className="flex h-full min-h-0 flex-col text-slate-200">
-      <div className="flex gap-1 border-b border-white/10 p-2">
-        {(
-          [
-            ["questions", "Questions"],
-            ["scorecard", "Scorecard"],
-            ["notes", "Private notes"],
-          ] as const
-        ).map(([id, label]) => (
+      <div className="flex gap-1 border-b border-white/[0.06] px-2 py-2">
+        {tabs.map(([id, label, Icon]) => (
           <button
             key={id}
             onClick={() => setTab(id)}
             className={cn(
-              "rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors",
-              tab === id ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white",
+              "ui-press flex h-8 flex-1 items-center justify-center gap-1.5 rounded-[9px] text-[11px] font-medium",
+              tab === id
+                ? "bg-white/[0.09] text-white"
+                : "text-slate-500 hover:bg-white/[0.05] hover:text-slate-200",
             )}
           >
+            <span
+              className={cn(
+                "grid size-5 place-items-center rounded-md",
+                tab === id ? "bg-accent text-white" : "text-slate-500",
+              )}
+            >
+              <Glyph icon={Icon} size="xs" />
+            </span>
             {label}
           </button>
         ))}
       </div>
       <div className="min-h-0 flex-1 overflow-auto p-4">
         {!isEvaluator ? (
-          <p className="rounded-xl bg-white/5 p-3 text-sm text-slate-400">
+          <p className="rounded-[12px] border border-white/[0.06] bg-white/[0.04] p-3 text-[13px] leading-6 text-slate-400">
             Evaluation tools are hidden from the candidate view. Switch role to Company, Client, or
             Investor to score this session.
           </p>
@@ -59,7 +72,7 @@ export function EvaluationPanel({ session }: { session: Session }) {
           <div className="space-y-5">
             {seed.map((q) => (
               <div key={q.id}>
-                <p className="mb-2 text-sm font-medium text-white">{q.prompt}</p>
+                <p className="mb-2 text-[13px] font-medium text-white">{q.prompt}</p>
                 {q.kind === "scale" ? (
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((n) => (
@@ -67,8 +80,10 @@ export function EvaluationPanel({ session }: { session: Session }) {
                         key={n}
                         onClick={() => setAnswers((a) => ({ ...a, [q.id]: n }))}
                         className={cn(
-                          "size-8 rounded-lg text-xs",
-                          answers[q.id] === n ? "bg-accent text-white" : "bg-white/10 text-slate-300 hover:bg-white/15",
+                          "ui-press size-8 rounded-[9px] text-xs",
+                          answers[q.id] === n
+                            ? "bg-accent text-white"
+                            : "bg-white/10 text-slate-300 hover:bg-white/15",
                         )}
                       >
                         {n}
@@ -83,8 +98,10 @@ export function EvaluationPanel({ session }: { session: Session }) {
                         key={opt}
                         onClick={() => setAnswers((a) => ({ ...a, [q.id]: opt }))}
                         className={cn(
-                          "rounded-full px-3 py-1 text-xs",
-                          answers[q.id] === opt ? "bg-accent text-white" : "bg-white/10 text-slate-300 hover:bg-white/15",
+                          "ui-press rounded-full px-3 py-1 text-xs",
+                          answers[q.id] === opt
+                            ? "bg-accent text-white"
+                            : "bg-white/10 text-slate-300 hover:bg-white/15",
                         )}
                       >
                         {opt}
@@ -107,15 +124,21 @@ export function EvaluationPanel({ session }: { session: Session }) {
 
         {isEvaluator && tab === "scorecard" ? (
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-slate-400">Overall</p>
-              <Badge tone="teal">{overall.toFixed(1)} / 5</Badge>
+            <div className="rounded-[14px] border border-white/[0.06] bg-white/[0.03] p-3">
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-semibold tracking-[0.14em] text-slate-500 uppercase">
+                  Overall
+                </p>
+                <Badge tone="teal">{overall.toFixed(1)} / 5</Badge>
+              </div>
+              <div className="mt-3">
+                <ScoreBar value={overall} invert />
+              </div>
             </div>
-            <ScoreBar value={overall} />
             {scores.map((dim) => (
               <div key={dim.id}>
-                <div className="mb-1 flex items-center justify-between text-sm">
-                  <span>{dim.label}</span>
+                <div className="mb-1 flex items-center justify-between text-[13px]">
+                  <span className="text-slate-200">{dim.label}</span>
                   <span className="tabular-nums text-slate-400">{dim.score}</span>
                 </div>
                 <input
@@ -134,18 +157,20 @@ export function EvaluationPanel({ session }: { session: Session }) {
                 />
               </div>
             ))}
-            <p className="text-sm font-medium">Recommendation</p>
-            <div className="flex flex-wrap gap-2">
-              {["strong_yes", "yes", "lean_yes", "no", "hold"].map((r) => (
+            <p className="pt-1 text-[10px] font-semibold tracking-[0.14em] text-slate-500 uppercase">
+              Recommendation
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {(["strong_yes", "yes", "lean_yes", "no", "hold"] as const).map((r) => (
                 <button
                   key={r}
                   onClick={() => setRec(r)}
                   className={cn(
-                    "rounded-full px-3 py-1 text-xs capitalize",
+                    "ui-press rounded-full px-3 py-1 text-[11px]",
                     rec === r ? "bg-accent text-white" : "bg-white/10 text-slate-300 hover:bg-white/15",
                   )}
                 >
-                  {r.replace("_", " ")}
+                  {recLabel[r]}
                 </button>
               ))}
             </div>
@@ -155,7 +180,7 @@ export function EvaluationPanel({ session }: { session: Session }) {
 
         {isEvaluator && tab === "notes" ? (
           <div>
-            <p className="mb-2 text-xs uppercase tracking-wide text-amber-300">
+            <p className="mb-2 text-[10px] font-semibold tracking-[0.14em] text-amber-300/90 uppercase">
               Visible only to evaluators
             </p>
             <Textarea

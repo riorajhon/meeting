@@ -1,5 +1,6 @@
 "use client";
 
+import { Glyph } from "@/components/icons";
 import { AppProvider, useApp } from "@/context/app-context";
 import { cn } from "@/lib/cn";
 import { roleLabel } from "@/lib/format";
@@ -89,7 +90,7 @@ function PlatformFrame({ children }: { children: ReactNode }) {
             onClick={() => setOpen(false)}
             aria-label="Close menu"
           >
-            <X size={16} />
+            <Glyph icon={X} size="md" />
           </button>
         </div>
 
@@ -104,7 +105,7 @@ function PlatformFrame({ children }: { children: ReactNode }) {
                 href={item.href}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "relative flex h-9 items-center gap-2.5 rounded-[10px] px-2.5 text-[13px] transition-colors",
+                  "ui-press relative flex h-9 items-center gap-2.5 rounded-[10px] px-2.5 text-[13px]",
                   isActive
                     ? "bg-white/[0.08] font-medium text-white"
                     : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100",
@@ -113,7 +114,14 @@ function PlatformFrame({ children }: { children: ReactNode }) {
                 {isActive ? (
                   <span className="absolute inset-y-1.5 left-0 w-[2px] rounded-full bg-accent" />
                 ) : null}
-                <Icon size={16} />
+                <span
+                  className={cn(
+                    "grid size-7 place-items-center rounded-[8px]",
+                    isActive ? "bg-accent/20 text-white" : "text-slate-400",
+                  )}
+                >
+                  <Glyph icon={Icon} size="md" />
+                </span>
                 {item.label}
               </Link>
             );
@@ -124,13 +132,13 @@ function PlatformFrame({ children }: { children: ReactNode }) {
           <Link
             href="/settings"
             className={cn(
-              "flex h-9 items-center gap-2.5 rounded-[10px] px-2.5 text-[13px] transition-colors",
+              "ui-press flex h-9 items-center gap-2.5 rounded-[10px] px-2.5 text-[13px]",
               settingsActive
                 ? "bg-white/[0.08] font-medium text-white"
                 : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100",
             )}
           >
-            <Settings size={16} />
+            <Glyph icon={Settings} size="md" />
             Settings
           </Link>
         </div>
@@ -181,15 +189,16 @@ function PlatformFrame({ children }: { children: ReactNode }) {
             onClick={() => setOpen(true)}
             aria-label="Open menu"
           >
-            <Menu size={16} />
+            <Glyph icon={Menu} size="md" />
           </button>
           <Link href="/" className="flex items-center gap-2 lg:hidden">
             <BrandMark size={40} />
             <span className="text-[15px] font-semibold tracking-tight text-ink">Caliber</span>
           </Link>
           <div className="relative max-w-md flex-1">
-            <Search
-              size={16}
+            <Glyph
+              icon={Search}
+              size="md"
               className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
             />
             <Input
@@ -209,7 +218,7 @@ function PlatformFrame({ children }: { children: ReactNode }) {
                 aria-label="Notifications"
                 className={notesOpen ? "border-slate-300 bg-slate-50" : ""}
               >
-                <Bell size={16} />
+                <Glyph icon={Bell} size="md" />
               </Button>
               <span className="absolute right-2 top-2 size-1.5 rounded-full bg-accent" />
               {notesOpen ? (
@@ -234,7 +243,7 @@ function PlatformFrame({ children }: { children: ReactNode }) {
             </div>
             <Link href="/sessions/new">
               <Button>
-                <Plus size={16} />
+                <Glyph icon={Plus} size="md" />
                 <span className="hidden sm:inline">New session</span>
               </Button>
             </Link>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Glyph, IconButton } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import {
@@ -375,7 +376,7 @@ export function Whiteboard() {
                 className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12px] text-slate-300 hover:bg-white/10"
               >
                 <span className={cn("grid size-7 place-items-center rounded-md border", kindMeta[s.kind].className)}>
-                  <Icon className="size-3.5" />
+                  <Glyph icon={Icon} size="sm" />
                 </span>
                 <span className="min-w-0">
                   <span className="block truncate font-medium">{s.label}</span>
@@ -398,27 +399,23 @@ export function Whiteboard() {
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex flex-wrap items-center gap-1.5 border-b border-white/10 px-3 py-2">
           {tools.map(([id, Icon, label]) => (
-            <button
+            <IconButton
               key={id}
-              title={label}
+              icon={Icon}
+              label={label}
+              size="sm"
+              selected={tool === id}
               onClick={() => {
                 setTool(id);
                 if (id !== "connect") setConnectFrom(null);
               }}
-              className={cn(
-                "grid size-8 place-items-center rounded-lg text-slate-300",
-                tool === id ? "bg-teal-700 text-white" : "hover:bg-white/10",
-              )}
-              aria-label={label}
-            >
-              <Icon className="size-4" />
-            </button>
+            />
           ))}
           {palettes.map((c) => (
             <button
               key={c}
               onClick={() => setColor(c)}
-              className={cn("size-5 rounded-full border", color === c ? "border-white" : "border-white/20")}
+              className={cn("ui-press size-5 rounded-full border", color === c ? "ring-2 ring-white/80" : "border-white/20")}
               style={{ background: c }}
               aria-label={c}
             />
@@ -426,11 +423,11 @@ export function Whiteboard() {
           <div className="mx-1 h-5 w-px bg-white/10" />
           {stamps.slice(0, 5).map((s) => (
             <Button key={s.label} size="sm" variant="dark" className="hidden lg:inline-flex" onClick={() => addStamp(s)}>
-              <StickyNote className="size-3" /> {s.label}
+              <Glyph icon={StickyNote} size="xs" /> {s.label}
             </Button>
           ))}
           <Button size="sm" variant="ghost" className="ml-auto text-slate-300" onClick={clearAll}>
-            <Trash2 className="size-4" /> Clear
+            <Glyph icon={Trash2} size="md" /> Clear
           </Button>
         </div>
 
@@ -517,7 +514,7 @@ export function Whiteboard() {
                 style={{ left: node.x, top: node.y, width: meta.w, minHeight: meta.h }}
               >
                 <p className="mb-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] opacity-70">
-                  <Icon className="size-3" /> {meta.kicker}
+                  <Glyph icon={Icon} size="xs" /> {meta.kicker}
                 </p>
                 {editingId === node.id ? (
                   <input
@@ -550,7 +547,7 @@ export function Whiteboard() {
         </div>
 
         <div className="flex h-11 shrink-0 items-center gap-3 border-t border-white/10 px-3 text-[11px] text-slate-500">
-          <Type className="size-3.5" />
+          <Glyph icon={Type} size="sm" className="text-slate-500" />
           <span>
             {connectFrom
               ? "Click a second node to draw a connector"

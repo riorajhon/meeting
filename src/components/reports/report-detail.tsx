@@ -1,17 +1,16 @@
 "use client";
 
-import { Badge, Button, Card, EmptyState, Kicker, PageHeader, ScoreBar } from "@/components/ui";
-import { reports, sessions } from "@/lib/data";
-import { formatWhen } from "@/lib/format";
-import { ArrowLeft, FileText } from "lucide-react";
+import { Glyph } from "@/components/icons";
+import { Badge, Button, EmptyState, Kicker, ScoreBar } from "@/components/ui";
+import { people, reports, sessions } from "@/lib/data";
+import { formatDate, recLabel, recTone } from "@/lib/format";
+import { ArrowLeft, ArrowUpRight, FileText } from "lucide-react";
 import Link from "next/link";
 
-const recLabel: Record<string, string> = {
-  strong_yes: "Strong yes",
-  yes: "Yes",
-  lean_yes: "Lean yes",
-  no: "No",
-  hold: "Hold",
+const riskTone = {
+  high: "rose" as const,
+  medium: "amber" as const,
+  low: "slate" as const,
 };
 
 export function ReportDetail({ id }: { id: string }) {
@@ -26,94 +25,160 @@ export function ReportDetail({ id }: { id: string }) {
     );
   }
   const session = sessions.find((s) => s.id === report.sessionId);
+  const evaluators = report.evaluatorIds.flatMap((eid) => {
+    const person = people.find((p) => p.id === eid);
+    return person ? [person] : [];
+  });
 
   return (
-    <div>
+    <div className="mx-auto max-w-[920px]">
       <Link
         href="/reports"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-muted hover:text-slate-800"
+        className="mb-5 inline-flex items-center gap-1.5 text-[13px] text-muted hover:text-slate-800"
       >
-        <ArrowLeft size={14} /> All reports
+        <Glyph icon={ArrowLeft} size="sm" /> All briefs
       </Link>
-      <PageHeader
-        kicker="Confidential brief"
-        title={report.title}
-        subtitle={`Published ${formatWhen(report.publishedAt)} · ${report.visibility} distribution`}
-        actions={
-          <Badge tone="teal" dot>
-            {recLabel[report.recommendation] ?? report.recommendation}
-          </Badge>
-        }
-      />
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <Card className="bg-[#fcfbf9] lg:min-h-[420px]">
-          <Kicker>Executive summary</Kicker>
-          <p className="mt-3 text-[15px] leading-7 text-slate-700">{report.summary}</p>
-          <h3 className="mt-8 text-[13px] font-semibold tracking-tight">Scored dimensions</h3>
+
+      <article className="brief-paper overflow-hidden rounded-[18px] border border-[#e6dfd2]">
+        <header className="border-b border-[#e6dfd2] px-6 py-7 sm:px-10">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Kicker className="text-[#8a8172]">Confidential decision brief</Kicker>
+            <Badge className="bg-[#efe8db] text-[#6f675c]">{report.visibility} distribution</Badge>
+          </div>
+          <h1 className="mt-3 max-w-3xl text-[28px] font-semibold tracking-[-0.04em] text-ink sm:text-[32px]">
+            {report.title}
+          </h1>
+          <p className="mt-2 text-[13.5px] text-muted">
+            {report.subject} · Published {formatDate(report.publishedAt)}
+          </p>
+          <p className="mt-1 text-[12px] text-slate-500">{report.distribution}</p>
+        </header>
+
+        <section className="grid gap-0 border-b border-[#e6dfd2] md:grid-cols-[1.15fr_0.85fr]">
+          <div className="border-[#e6dfd2] px-6 py-7 sm:px-10 md:border-r">
+            <p className="text-[10px] font-semibold tracking-[0.16em] text-[#8a8172] uppercase">
+              Verdict
+            </p>
+            <div className="mt-3 flex flex-wrap items-end gap-4">
+              <Badge tone={recTone[report.recommendation]} dot className="h-8 px-3 text-[13px]">
+                {recLabel[report.recommendation]}
+              </Badge>
+              <div>
+                <p className="text-[40px] leading-none font-semibold tracking-[-0.06em] text-ink">
+                  {report.overall.toFixed(1)}
+                </p>
+                <p className="mt-1 text-[12px] text-muted">overall · 5.0 scale</p>
+              </div>
+            </div>
+            <p className="mt-5 text-[15px] leading-7 text-slate-700">{report.summary}</p>
+            {evaluators.length > 0 ? (
+              <p className="mt-5 text-[12px] text-slate-500">
+                Evaluated by {evaluators.map((p) => p.name).join(", ")}
+              </p>
+            ) : null}
+          </div>
+          <div className="bg-[#f3eee5]/70 px-6 py-7 sm:px-8">
+            <p className="text-[10px] font-semibold tracking-[0.16em] text-[#8a8172] uppercase">
+              Scores
+            </p>
+            <div className="mt-4 space-y-4">
+              {report.dimensions.map((d) => (
+                <div key={d.id}>
+                  <div className="mb-1.5 flex items-baseline justify-between gap-3 text-[13px]">
+                    <span className="font-medium text-slate-800">{d.label}</span>
+                    <span className="tabular-nums text-muted">
+                      {d.score.toFixed(1)}
+                    </span>
+                  </div>
+                  <ScoreBar value={d.score} max={d.max} tone="ink" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-[#e6dfd2] px-6 py-8 sm:px-10">
+          <h2 className="text-[11px] font-semibold tracking-[0.16em] text-[#8a8172] uppercase">
+            Findings
+          </h2>
+          <ol className="mt-4 space-y-4">
+            {report.findings.map((finding, i) => (
+              <li key={finding} className="flex gap-4 text-[14.5px] leading-7 text-slate-700">
+                <span className="w-6 shrink-0 tabular-nums text-[#a39a8c]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span>{finding}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="border-b border-[#e6dfd2] px-6 py-8 sm:px-10">
+          <h2 className="text-[11px] font-semibold tracking-[0.16em] text-[#8a8172] uppercase">
+            Evaluation notes
+          </h2>
           <div className="mt-4 space-y-5">
             {report.dimensions.map((d, i) => (
-              <div key={d.id}>
-                <div className="mb-1.5 flex justify-between text-[13px]">
-                  <span className="font-medium text-slate-800">
-                    <span className="mr-2 tabular-nums text-slate-400">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    {d.label}
+              <div key={d.id} className="grid gap-1 sm:grid-cols-[180px_minmax(0,1fr)] sm:gap-6">
+                <p className="text-[13px] font-medium text-ink">
+                  <span className="mr-2 tabular-nums text-[#a39a8c]">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="tabular-nums text-muted">
-                    {d.score} / {d.max}
-                  </span>
-                </div>
-                <ScoreBar value={d.score} max={d.max} />
+                  {d.label}
+                </p>
+                <p className="text-[13.5px] leading-6 text-slate-600">
+                  {d.notes ?? "No additional note on this dimension."}
+                </p>
               </div>
             ))}
           </div>
-        </Card>
-        <div className="space-y-4">
-          <Card className="text-center">
-            <Kicker>Overall rating</Kicker>
-            <p className="mt-3 text-5xl font-semibold tracking-[-0.05em]">{report.overall.toFixed(1)}</p>
-            <p className="mt-1 text-[13px] text-muted">out of 5.0</p>
-            <div className="mt-5 h-24">
-              <Sparkline values={report.dimensions.map((d) => d.score)} />
-            </div>
-          </Card>
+        </section>
+
+        <section className="border-b border-[#e6dfd2] px-6 py-8 sm:px-10">
+          <h2 className="text-[11px] font-semibold tracking-[0.16em] text-[#8a8172] uppercase">
+            Risks
+          </h2>
+          <div className="mt-4 space-y-3">
+            {report.risks.map((risk) => (
+              <div
+                key={risk.id}
+                className="flex flex-col gap-2 rounded-[12px] border border-[#e6dfd2] bg-white/40 px-4 py-3 sm:flex-row sm:items-start"
+              >
+                <Badge tone={riskTone[risk.level]} className="capitalize">
+                  {risk.level}
+                </Badge>
+                <div className="min-w-0">
+                  <p className="text-[14px] font-medium text-ink">{risk.label}</p>
+                  <p className="mt-1 text-[13px] leading-6 text-slate-600">{risk.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="px-6 py-8 sm:px-10">
+          <h2 className="text-[11px] font-semibold tracking-[0.16em] text-[#8a8172] uppercase">
+            Recommendation & next steps
+          </h2>
+          <p className="mt-4 max-w-2xl text-[15px] leading-7 text-slate-700">{report.summary}</p>
+          <ul className="mt-5 space-y-2.5">
+            {report.nextSteps.map((step) => (
+              <li key={step} className="flex gap-3 text-[14px] leading-6 text-slate-700">
+                <span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+                {step}
+              </li>
+            ))}
+          </ul>
           {session ? (
-            <Link href={`/sessions/${session.id}`}>
-              <Card hover>
-                <Kicker>Source session</Kicker>
-                <p className="mt-1.5 text-[14px] font-medium">{session.title}</p>
-                <Button variant="secondary" size="sm" className="mt-4 w-full">
-                  Open session
-                </Button>
-              </Card>
+            <Link href={`/sessions/${session.id}`} className="mt-8 inline-block">
+              <Button variant="secondary" size="sm">
+                Open source session
+                <Glyph icon={ArrowUpRight} size="sm" />
+              </Button>
             </Link>
           ) : null}
-        </div>
-      </div>
+        </section>
+      </article>
     </div>
-  );
-}
-
-function Sparkline({ values }: { values: number[] }) {
-  const max = 5;
-  const w = 260;
-  const h = 96;
-  const pts = values
-    .map((v, i) => {
-      const x = (i / Math.max(values.length - 1, 1)) * w;
-      const y = h - (v / max) * (h - 8) - 4;
-      return `${x},${y}`;
-    })
-    .join(" ");
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="h-full w-full text-accent">
-      <polyline fill="none" stroke="currentColor" strokeWidth="2" points={pts} />
-      {values.map((v, i) => {
-        const x = (i / Math.max(values.length - 1, 1)) * w;
-        const y = h - (v / max) * (h - 8) - 4;
-        return <circle key={i} cx={x} cy={y} r="3" fill="currentColor" />;
-      })}
-    </svg>
   );
 }

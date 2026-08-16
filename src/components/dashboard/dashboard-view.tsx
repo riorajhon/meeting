@@ -11,6 +11,7 @@ import {
   SectionHeader,
   StatusBadge,
 } from "@/components/ui";
+import { Glyph } from "@/components/icons";
 import { useApp } from "@/context/app-context";
 import { companies, people, reports } from "@/lib/data";
 import { formatWhen, roleLabel, typeLabel } from "@/lib/format";
@@ -81,7 +82,7 @@ export function DashboardView() {
         <div className="mb-7 flex flex-col gap-4 overflow-hidden rounded-[14px] border border-line bg-ink text-white sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4">
           <div className="flex items-center gap-3.5 px-5 pt-4 sm:p-0">
             <span className="relative grid size-10 place-items-center rounded-full bg-rose-600">
-              <Radio size={16} />
+              <Glyph icon={Radio} size="md" />
               <span className="absolute inset-0 animate-ping rounded-full bg-rose-500/25" />
             </span>
             <div>
@@ -139,7 +140,7 @@ export function DashboardView() {
                       {host ? (
                         <Avatar name={host.name} hue={host.avatarHue} src={host.avatar} size="sm" />
                       ) : null}
-                      <ArrowRight size={16} className="text-slate-300" />
+                      <Glyph icon={ArrowRight} size="md" className="text-slate-300" />
                     </div>
                   </Link>
                 );
@@ -165,7 +166,7 @@ export function DashboardView() {
             {reports.slice(0, 2).map((report) => (
               <Link key={report.id} href={`/reports/${report.id}`}>
                 <Card hover>
-                  <p className="kicker">Latest report</p>
+                  <p className="kicker">Latest brief</p>
                   <p className="mt-1.5 text-[14px] font-medium text-slate-900">{report.title}</p>
                   <div className="mt-3">
                     <ScoreBar value={report.overall} />

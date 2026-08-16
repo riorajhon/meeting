@@ -1,5 +1,6 @@
 "use client";
 
+import { Glyph, IconWell } from "@/components/icons";
 import { BrandMark } from "@/components/brand-mark";
 import { LoadingMark } from "@/components/page-loader";
 import { Reveal } from "@/components/marketing/reveal";
@@ -10,19 +11,15 @@ import {
   ArrowRight,
   ArrowUpRight,
   CheckCircle2,
+  ClipboardCheck,
   Code2,
-  Globe2,
-  LayoutGrid,
+  FileText,
   Menu,
   MessageSquare,
   MonitorUp,
-  PenTool,
   Radio,
-  ShieldCheck,
-  Sparkles,
   Video,
   X,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -32,35 +29,39 @@ const person = (id: string) => people.find((p) => p.id === id)!;
 const products = [
   {
     id: "meet",
-    label: "Meeting rooms",
-    title: "Participant layouts that feel like a real session",
-    body: "Gallery and speaker views, presence, chat, and simulated screen share — without third-party meeting SDKs.",
+    step: "01",
+    label: "Meeting",
+    title: "A professional room — not a generic video call",
+    body: "Gallery and speaker layouts, presence, chat, and simulated share, designed for diligence and interviews rather than social meetings.",
     href: "/sessions/s2/room",
     icon: Video,
   },
   {
     id: "code",
-    label: "Coding tests",
-    title: "A live assessment workspace in the same room",
-    body: "Problem prompt, editor, language switch, and mocked test results so hiring loops stay in one surface.",
+    step: "02",
+    label: "Assessment",
+    title: "Code and system design stay in the same session",
+    body: "Live coding, a structured whiteboard, and the candidate feed in one stage so hiring and review loops do not split across tools.",
     href: "/sessions/s2/room",
     icon: Code2,
   },
   {
-    id: "board",
-    label: "Whiteboard",
-    title: "System design without leaving the call",
-    body: "Draw, stamp architecture nodes, and walk a design with evaluators watching in real time.",
+    id: "eval",
+    step: "03",
+    label: "Evaluation",
+    title: "Private scorecards while the room is still live",
+    body: "Questions, ratings, and evaluator notes sit beside the meeting — visible to the committee, hidden from the candidate.",
     href: "/sessions/s2/room",
-    icon: PenTool,
+    icon: ClipboardCheck,
   },
   {
     id: "score",
-    label: "Scorecards",
-    title: "Private notes, ratings, and published reports",
-    body: "Structured questions, recommendation, and a report the hiring committee or investment team can share.",
+    step: "04",
+    label: "Decision",
+    title: "A brief the committee can actually use",
+    body: "Scores, findings, risks, and a recommendation publish as a decision document — not a dashboard widget.",
     href: "/reports",
-    icon: LayoutGrid,
+    icon: FileText,
   },
 ];
 
@@ -123,7 +124,7 @@ export function LandingPage() {
             Live
           </span>
           Staff Engineer loop with Sam Okonkwo is in progress
-          <ArrowRight className="size-3.5" />
+          <Glyph icon={ArrowRight} size="sm" />
         </Link>
       </div>
 
@@ -163,7 +164,7 @@ export function LandingPage() {
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
           >
-            {open ? <X className="size-4" /> : <Menu className="size-4" />}
+            {open ? <Glyph icon={X} size="md" /> : <Glyph icon={Menu} size="md" />}
           </button>
         </div>
         {open ? (
@@ -200,34 +201,34 @@ export function LandingPage() {
           <div className="mark-in mb-7 flex justify-center">
             <LoadingMark size={96} />
           </div>
-          <p className="hero-rise mb-5 text-sm font-medium text-cyan-300" style={{ animationDelay: "120ms" }}>
-            Professional meetings & assessments
+          <p className="hero-rise mb-5 text-sm font-medium text-teal-300" style={{ animationDelay: "120ms" }}>
+            Professional meeting → Assessment → Evaluation → Decision
           </p>
           <h1
-            className="hero-rise mx-auto max-w-5xl text-[40px] font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-[84px]"
+            className="hero-rise mx-auto max-w-5xl text-[40px] font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-[80px]"
             style={{ animationDelay: "200ms" }}
           >
-            Build real-time
+            The assessment room
             <br />
-            interviews, reviews
+            for decisions that
             <br />
-            <span className="bg-gradient-to-r from-cyan-300 via-sky-200 to-white bg-clip-text text-transparent">
-              &amp; live assessments
+            <span className="bg-gradient-to-r from-teal-300 via-sky-200 to-white bg-clip-text text-transparent">
+              have to hold up
             </span>
           </h1>
           <p
             className="hero-rise mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl"
             style={{ animationDelay: "340ms" }}
           >
-            The workspace powering investor meetings, client technical reviews, hiring loops, and
-            agency evaluations — with rooms, coding, whiteboard, and scorecards in one place.
+            Run a professional meeting, complete the assessment, capture evaluation, and publish a
+            decision — in one workspace for hiring, diligence, and client reviews.
           </p>
           <div className="hero-rise mt-9 flex flex-wrap items-center justify-center gap-3" style={{ animationDelay: "460ms" }}>
             <Link
               href="/dashboard"
               className="cta-glow inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-slate-950 hover:bg-slate-100"
             >
-              Open workspace <ArrowRight className="size-4" />
+              Open workspace <Glyph icon={ArrowRight} size="md" />
             </Link>
             <Link
               href="/sessions/s2/room"
@@ -237,20 +238,8 @@ export function LandingPage() {
             </Link>
           </div>
 
-          <div className="hero-rise mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-6 text-left sm:grid-cols-3" style={{ animationDelay: "560ms" }}>
-            {[
-              { icon: Zap, value: "One room", hint: "Video, chat, share, code, board" },
-              { icon: Globe2, value: "Four views", hint: "Investor, client, company, candidate" },
-              { icon: ShieldCheck, value: "Ready later", hint: "Mocked now, API-shaped for your stack" },
-            ].map((item) => (
-              <div key={item.value} className="flex gap-3">
-                <item.icon className="mt-0.5 size-5 text-cyan-300" />
-                <div>
-                  <p className="font-semibold">{item.value}</p>
-                  <p className="text-sm text-slate-400">{item.hint}</p>
-                </div>
-              </div>
-            ))}
+          <div className="hero-rise mx-auto mt-12 w-full max-w-4xl" style={{ animationDelay: "560ms" }}>
+            <FlowStrip />
           </div>
 
           <div className="hero-rise mt-12 w-full" style={{ animationDelay: "640ms" }}>
@@ -276,10 +265,13 @@ export function LandingPage() {
 
       <section className="mx-auto max-w-7xl px-5 py-16">
         <Reveal className="mb-8 text-center">
-          <p className="text-sm font-semibold text-cyan-300">Live session footage</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Real video in the room — not placeholders
+          <p className="text-sm font-semibold text-teal-300">01 · Professional meeting</p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+            The room is the work surface
           </h2>
+          <p className="mx-auto mt-3 max-w-xl text-slate-400">
+            Live footage sits in the meeting stage. Assessment and evaluation attach to the same session.
+          </p>
         </Reveal>
         <div className="grid gap-3 lg:grid-cols-3">
           <div className="relative overflow-hidden rounded-[24px] lg:col-span-2">
@@ -315,9 +307,9 @@ export function LandingPage() {
       <section className="relative mx-auto max-w-7xl px-5 py-24">
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.15fr]">
           <Reveal>
-            <p className="text-sm font-semibold text-cyan-300">Caliber Real-Time Workspace</p>
+            <p className="text-sm font-semibold text-teal-300">How it connects</p>
             <h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-              Deploy sessions on infrastructure-shaped UI — without a meeting SDK
+              One session, from the room to the brief
             </h2>
             <p className="mt-5 max-w-lg text-base leading-7 text-slate-400">
               This phase is frontend: rooms, assessments, and evaluation chrome with mock media.
@@ -325,12 +317,12 @@ export function LandingPage() {
             </p>
             <div className="mt-8 space-y-4">
               {[
-                "Investor and client rooms with private evaluator notes",
-                "Coding tests and system-design boards in the same session",
-                "Role-aware dashboards for every participant type",
+                "Professional meeting rooms with presence, share, and chat",
+                "Assessment surfaces — coding and system design — in the same session",
+                "Evaluation that publishes as a decision brief",
               ].map((line) => (
-                <p key={line} className="flex items-start gap-2 text-sm text-slate-200">
-                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-cyan-400" />
+                <p key={line} className="flex items-start gap-2.5 text-sm text-slate-200">
+                  <Glyph icon={CheckCircle2} size="md" className="mt-0.5 shrink-0 text-teal-400" />
                   {line}
                 </p>
               ))}
@@ -345,12 +337,15 @@ export function LandingPage() {
       <section id="product" className="bg-[#f4f6fa] text-slate-900">
         <div className="mx-auto max-w-7xl px-5 py-24">
           <Reveal className="max-w-3xl">
-            <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-              Easily run live communication and evaluation
+            <p className="text-sm font-semibold tracking-[0.14em] text-teal-700 uppercase">
+              Product flow
+            </p>
+            <h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
+              Meeting, assessment, evaluation, decision
             </h2>
             <p className="mt-4 text-lg text-slate-600">
-              Modular surfaces — video, screen, coding, whiteboard, questions, scorecards — compose
-              into each session type.
+              Four stages in one product. Each session type composes the same surfaces — people,
+              share, code, board, chat, and evaluate.
             </p>
           </Reveal>
           <div className="mt-10 flex flex-wrap gap-2">
@@ -359,26 +354,36 @@ export function LandingPage() {
                 key={p.id}
                 onClick={() => setTab(p.id)}
                 className={cn(
-                  "rounded-full px-4 py-2 text-sm font-medium",
+                  "ui-press inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium",
                   tab === p.id
                     ? "bg-[#05070d] text-white"
                     : "bg-white text-slate-600 ring-1 ring-slate-200 hover:text-slate-900",
                 )}
               >
+                <span className={cn("tabular-nums text-[11px]", tab === p.id ? "text-teal-300" : "text-slate-400")}>
+                  {p.step}
+                </span>
                 {p.label}
               </button>
             ))}
           </div>
           <div className="mt-8 grid gap-6 overflow-hidden rounded-[28px] bg-[#0b1220] p-6 text-white lg:grid-cols-[1.1fr_0.9fr] lg:p-10">
             <div>
-              <ActiveIcon className="size-8 text-cyan-300" />
-              <h3 className="mt-5 text-3xl font-semibold tracking-tight">{active.title}</h3>
+              <IconWell
+                icon={ActiveIcon}
+                size="lg"
+                className="bg-white/[0.07] text-teal-300"
+              />
+              <p className="mt-5 text-[11px] font-semibold tracking-[0.16em] text-teal-300 uppercase">
+                {active.step} · {active.label}
+              </p>
+              <h3 className="mt-2 text-3xl font-semibold tracking-tight">{active.title}</h3>
               <p className="mt-3 max-w-lg text-slate-300">{active.body}</p>
               <Link
                 href={active.href}
-                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 hover:text-cyan-200"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-teal-300 hover:text-teal-200"
               >
-                Open this surface <ArrowUpRight className="size-4" />
+                Open this surface <Glyph icon={ArrowUpRight} size="md" />
               </Link>
             </div>
             <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
@@ -426,7 +431,7 @@ export function LandingPage() {
                     <h3 className="text-lg font-semibold">{item.title}</h3>
                     <p className="mt-2 text-sm leading-6 text-slate-400">{item.text}</p>
                     <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-cyan-300 transition-all group-hover:gap-2">
-                      Open session <ArrowRight className="size-4" />
+                      Open session <Glyph icon={ArrowRight} size="md" />
                     </span>
                   </div>
                 </Link>
@@ -439,24 +444,26 @@ export function LandingPage() {
       <section className="bg-[#05070d]">
         <div className="mx-auto max-w-7xl px-5 py-24">
           <Reveal>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-400">
-              Grow with the leading workspace
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-teal-400">
+              The path to a decision
             </p>
             <h2 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight sm:text-6xl">
-              Powering live evaluation
+              Meet, assess, evaluate,
               <br />
-              <span className="text-slate-500">for interviews, diligence, and reviews</span>
+              <span className="text-slate-500">then publish the brief</span>
             </h2>
           </Reveal>
           <div className="mt-12 grid gap-4 sm:grid-cols-3">
             {[
-              ["Simulated media", "Video, share, and recording chrome with no vendor SDK."],
-              ["Typed domain", "People, companies, sessions, scorecards — swap mocks for APIs."],
-              ["Role-aware UI", "Investor, client, company, and candidate views from day one."],
+              ["Professional meeting", "Video, presence, share, and chat in a room built for assessment."],
+              ["Assessment", "Coding and whiteboard stay on the same stage as the conversation."],
+              ["Evaluation to decision", "Scorecards become a brief with findings, risks, and a recommendation."],
             ].map(([title, body], i) => (
               <Reveal key={title} delay={i * 80}>
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-6 transition-colors hover:bg-white/[0.08]">
-                  <Sparkles className="size-5 text-cyan-300" />
+                  <p className="text-[11px] font-semibold tracking-[0.16em] text-teal-400 uppercase">
+                    {String(i + 1).padStart(2, "0")}
+                  </p>
                   <p className="mt-4 font-semibold">{title}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
                 </div>
@@ -516,9 +523,9 @@ export function LandingPage() {
               Get started with a live workspace
             </h2>
             <p className="mt-4 max-w-xl text-lg text-white/80">
-              Open the dashboard, join the Staff Engineer room, or create a session. You do not need
-              a meeting vendor to explore the UI.
-            </p>
+            Open the dashboard, join a live room, or create a session. Follow the same path:
+            professional meeting → assessment → evaluation → decision.
+          </p>
             <Link
               href="/dashboard"
               className="cta-glow mt-8 inline-flex h-12 items-center rounded-full bg-white px-6 text-sm font-semibold text-slate-950"
@@ -599,6 +606,32 @@ export function LandingPage() {
   );
 }
 
+function FlowStrip() {
+  const steps = [
+    { n: "01", label: "Professional meeting", hint: "People, share, chat" },
+    { n: "02", label: "Assessment", hint: "Code and board" },
+    { n: "03", label: "Evaluation", hint: "Score while live" },
+    { n: "04", label: "Decision", hint: "Publish the brief" },
+  ];
+  return (
+    <ol className="grid gap-2 sm:grid-cols-4">
+      {steps.map((step, i) => (
+        <li
+          key={step.n}
+          className="relative rounded-[16px] border border-white/10 bg-white/[0.04] px-4 py-3 text-left"
+        >
+          {i < steps.length - 1 ? (
+            <span className="flow-step-line absolute top-1/2 right-[-6px] hidden h-px w-3 sm:block" />
+          ) : null}
+          <p className="text-[10px] font-semibold tracking-[0.16em] text-teal-300">{step.n}</p>
+          <p className="mt-1.5 text-[13px] font-semibold text-white">{step.label}</p>
+          <p className="mt-0.5 text-[12px] text-slate-400">{step.hint}</p>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 function LoopVideo({
   src,
   className,
@@ -629,7 +662,7 @@ function HeroStage({ large = false }: { large?: boolean }) {
     >
       <div className="mb-3 flex items-center justify-between px-1 text-xs text-slate-400">
         <span className="flex items-center gap-2">
-          <Radio className="size-3 text-rose-400" /> Staff Engineer — live
+          <Glyph icon={Radio} size="xs" className="text-rose-400" /> Staff Engineer — live
         </span>
         <span>Real video · 12:18</span>
       </div>
@@ -662,15 +695,29 @@ function HeroStage({ large = false }: { large?: boolean }) {
           ))}
         </div>
       </div>
-      <div className="mt-3 flex items-center justify-center gap-2">
-        {[Video, MessageSquare, MonitorUp, Radio].map((Icon, i) => (
-          <span key={i} className="grid size-9 place-items-center rounded-full bg-white/10">
-            <Icon className="size-4" />
+      <div className="mt-3 flex items-center justify-center gap-1.5">
+        {(
+          [
+            [Video, "People"],
+            [MessageSquare, "Chat"],
+            [MonitorUp, "Share"],
+            [ClipboardCheck, "Evaluate"],
+          ] as const
+        ).map(([Icon, label], i) => (
+          <span
+            key={label}
+            className={cn(
+              "grid size-9 place-items-center rounded-[10px] bg-white/10 text-slate-200",
+              i === 0 && "bg-white text-ink",
+            )}
+            title={label}
+          >
+            <Glyph icon={Icon} size="md" />
           </span>
         ))}
         <Link
           href="/sessions/s2/room"
-          className="grid h-9 place-items-center rounded-full bg-rose-600 px-4 text-xs font-medium"
+          className="ml-1 grid h-9 place-items-center rounded-[10px] bg-rose-600 px-4 text-xs font-medium"
         >
           Join room
         </Link>
@@ -702,6 +749,27 @@ function ProductPreview({ id }: { id: string }) {
       </div>
     );
   }
+  if (id === "eval") {
+    return (
+      <div className="space-y-3 p-1">
+        <div className="flex items-center justify-between text-xs text-slate-400">
+          <span>Live scorecard</span>
+          <span className="text-teal-300">3.8 / 5</span>
+        </div>
+        {["Problem framing", "Architecture", "Trade-offs"].map((label, i) => (
+          <div key={label}>
+            <div className="mb-1 flex justify-between text-xs text-slate-300">
+              <span>{label}</span>
+              <span>{[4, 4, 3][i]} / 5</span>
+            </div>
+            <div className="h-1.5 rounded-full bg-white/10">
+              <div className="h-full rounded-full bg-teal-400" style={{ width: `${[80, 80, 60][i]}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
   if (id === "score") {
     return (
       <div className="space-y-4 p-2">
@@ -712,7 +780,7 @@ function ProductPreview({ id }: { id: string }) {
               <span>{[4, 5, 4][i]} / 5</span>
             </div>
             <div className="h-1.5 rounded-full bg-white/10">
-              <div className="h-full rounded-full bg-cyan-400" style={{ width: `${[80, 100, 80][i]}%` }} />
+              <div className="h-full rounded-full bg-teal-400" style={{ width: `${[80, 100, 80][i]}%` }} />
             </div>
           </div>
         ))}

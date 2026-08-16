@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, Badge, Button, Card, EmptyState, PageHeader, Select, StatusBadge } from "@/components/ui";
+import { Glyph } from "@/components/icons";
 import { useApp } from "@/context/app-context";
 import { people } from "@/lib/data";
 import { formatWhen, typeLabel } from "@/lib/format";
@@ -56,7 +57,7 @@ export function SessionsView() {
         actions={
           <Link href="/sessions/new">
             <Button>
-              <Plus size={16} /> New session
+              <Glyph icon={Plus} size="md" /> New session
             </Button>
           </Link>
         }

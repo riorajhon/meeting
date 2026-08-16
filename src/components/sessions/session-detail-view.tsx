@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, Badge, Button, Card, EmptyState, Kicker, PageHeader, StatusBadge } from "@/components/ui";
+import { Glyph } from "@/components/icons";
 import { useApp } from "@/context/app-context";
 import { companies, people, reports } from "@/lib/data";
 import { formatWhen, typeLabel } from "@/lib/format";
@@ -33,7 +34,7 @@ export function SessionDetailView({ id }: { id: string }) {
             <StatusBadge status={session.status} />
             <Link href={`/sessions/${session.id}/room`}>
               <Button>
-                <Video size={16} />
+                <Glyph icon={Video} size="md" />
                 {session.status === "completed" ? "Replay room" : "Enter room"}
               </Button>
             </Link>
@@ -91,7 +92,7 @@ export function SessionDetailView({ id }: { id: string }) {
                         {p.meetingRole} · {person.title}
                       </span>
                     </span>
-                    <ArrowRight size={16} className="text-slate-300" />
+                    <Glyph icon={ArrowRight} size="md" className="text-slate-300" />
                   </Link>
                 );
               })}

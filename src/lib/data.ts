@@ -401,14 +401,73 @@ export const reports: Report[] = [
     recommendation: "yes",
     overall: 4.4,
     dimensions: [
-      { id: "d1", label: "Craft quality", score: 5, max: 5 },
-      { id: "d2", label: "Process fit", score: 4, max: 5 },
-      { id: "d3", label: "Communication", score: 5, max: 5 },
-      { id: "d4", label: "Commercials", score: 3, max: 5 },
-      { id: "d5", label: "Risk", score: 4, max: 5 },
+      {
+        id: "d1",
+        label: "Craft quality",
+        score: 5,
+        max: 5,
+        notes: "Production-grade system, tokens map cleanly into implementation.",
+      },
+      {
+        id: "d2",
+        label: "Process fit",
+        score: 4,
+        max: 5,
+        notes: "Workshop cadence is realistic; weekly governance is still light.",
+      },
+      {
+        id: "d3",
+        label: "Communication",
+        score: 5,
+        max: 5,
+        notes: "Clear trade-offs, no overselling, precise answers on a11y.",
+      },
+      {
+        id: "d4",
+        label: "Commercials",
+        score: 3,
+        max: 5,
+        notes: "Above internal benchmark; premium is tied to accessibility depth.",
+      },
+      {
+        id: "d5",
+        label: "Delivery risk",
+        score: 4,
+        max: 5,
+        notes: "Capacity is finite but the 8-week sequence is credible.",
+      },
     ],
     publishedAt: "2026-08-08T15:40:00+02:00",
     visibility: "shared",
+    subject: "Brightline Studio — design systems engagement",
+    distribution: "Hiring committee · Product leadership",
+    findings: [
+      "Elena presented a coherent design-system approach and a realistic 8-week plan.",
+      "Craft quality is high: tokens, documentation, and accessibility work are above studio peer set.",
+      "Commercials sit slightly above benchmark, justified by accessibility depth rather than staffing padding.",
+    ],
+    risks: [
+      {
+        id: "k1",
+        label: "Rate premium",
+        detail:
+          "Fees are above internal benchmark. Acceptable if scoped to the a11y and token work, not open-ended exploration.",
+        level: "medium",
+      },
+      {
+        id: "k2",
+        label: "Studio capacity",
+        detail:
+          "Brightline is a small team. A delayed kickoff or parallel client would compress the 8-week sequence.",
+        level: "low",
+      },
+    ],
+    nextSteps: [
+      "Issue a two-week paid discovery SOW covering audit + token mapping.",
+      "Cap the first phase at the proposed 8-week plan with a named lead.",
+      "Schedule a 30-minute commercial alignment before the kickoff workshop.",
+    ],
+    evaluatorIds: ["u1", "u9"],
   },
   {
     id: "r2",
@@ -419,14 +478,73 @@ export const reports: Report[] = [
     recommendation: "lean_yes",
     overall: 3.8,
     dimensions: [
-      { id: "d1", label: "Problem framing", score: 4, max: 5 },
-      { id: "d2", label: "Architecture", score: 4, max: 5 },
-      { id: "d3", label: "Trade-offs", score: 3, max: 5 },
-      { id: "d4", label: "Communication", score: 4, max: 5 },
-      { id: "d3b", label: "Depth", score: 4, max: 5 },
+      {
+        id: "d1",
+        label: "Problem framing",
+        score: 4,
+        max: 5,
+        notes: "Scoped the streaming problem quickly and named the consumer contract.",
+      },
+      {
+        id: "d2",
+        label: "Architecture",
+        score: 4,
+        max: 5,
+        notes: "Clear ownership boundaries; service map would ship as-is.",
+      },
+      {
+        id: "d3",
+        label: "Trade-offs",
+        score: 3,
+        max: 5,
+        notes: "Needed prompting on back-pressure and exactly-once semantics.",
+      },
+      {
+        id: "d4",
+        label: "Communication",
+        score: 4,
+        max: 5,
+        notes: "Calm, structured walkthrough. Whiteboard stayed readable.",
+      },
+      {
+        id: "d3b",
+        label: "Technical depth",
+        score: 4,
+        max: 5,
+        notes: "Strong streaming mental model; less precise on failure modes.",
+      },
     ],
     publishedAt: "2026-08-06T18:10:00+02:00",
     visibility: "private",
+    subject: "Omar Haddad — staff system design loop",
+    distribution: "Interviewers only",
+    findings: [
+      "Strong streaming mental model and clear ownership boundaries across producers, brokers, and consumers.",
+      "Whiteboard communication stayed structured; interviewers could score from the board without extra narration.",
+      "Needed prompting on back-pressure and exactly-once semantics — not a blocker, but a gap for Staff bar.",
+    ],
+    risks: [
+      {
+        id: "k1",
+        label: "Exactly-once gap",
+        detail:
+          "Did not independently raise idempotency and replay until prompted. May need a coding loop to confirm.",
+        level: "medium",
+      },
+      {
+        id: "k2",
+        label: "Unobserved coding signal",
+        detail:
+          "This loop was system design only. A Staff offer should not close without a live coding result.",
+        level: "low",
+      },
+    ],
+    nextSteps: [
+      "Advance to a Staff coding loop plus hiring-manager conversation.",
+      "Ask specifically about back-pressure, poison-pill handling, and consumer lag SLOs.",
+      "Hold the written recommendation at lean yes until the coding scorecard is in.",
+    ],
+    evaluatorIds: ["u6", "u1"],
   },
 ];
 

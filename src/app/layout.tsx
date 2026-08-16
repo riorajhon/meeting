@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Caliber — real-time meetings & assessments",
+  title: "Caliber — meeting, assessment, evaluation, decision",
   description:
-    "Build live interviews, investor meetings, client reviews, and technical assessments. Rooms, coding, whiteboard, and scorecards in one workspace.",
+    "Professional meeting, assessment, evaluation, and decision — in one workspace for hiring, diligence, and client reviews.",
   icons: {
     icon: [
       { url: "/brand/mark.svg", type: "image/svg+xml" },

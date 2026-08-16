@@ -70,3 +70,25 @@ export function statusTone(
 export function avatarColor(hue: number) {
   return `hsl(${hue} 42% 36%)`;
 }
+
+export const recLabel: Record<
+  "strong_yes" | "yes" | "lean_yes" | "no" | "hold",
+  string
+> = {
+  strong_yes: "Strong yes",
+  yes: "Yes",
+  lean_yes: "Lean yes",
+  no: "No",
+  hold: "Hold",
+};
+
+export const recTone: Record<
+  "strong_yes" | "yes" | "lean_yes" | "no" | "hold",
+  "slate" | "teal" | "amber" | "rose" | "blue" | "violet" | "emerald"
+> = {
+  strong_yes: "emerald",
+  yes: "teal",
+  lean_yes: "blue",
+  no: "rose",
+  hold: "amber",
+};
